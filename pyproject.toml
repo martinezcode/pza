@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pza"
+version = "0.4.2"
+description = "Framework for python zen apps."
+authors = [{ name = "Aaron Martinez" }]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12.1"
+dependencies = [
+    "certifi>=2025.10.5"
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pza*"]
+
+[tool.setuptools.package-data]
+"pza.templates.pride" = ["*", "pride/*", "pride/docs/*"]
+"pza.templates.solo" = ["solo/*"]
+"pza.docs" = ["*"]
+"pza.resources" = ["*", "images/*"]
+
+[project.scripts]
+pza = "pza.__main__:main"
