@@ -20,3 +20,4 @@
 - Fixed pride project.scripts in project.toml
 - Updated README
 - Added code files for README examples
+- Updated logo to high-resolution with image attribution
