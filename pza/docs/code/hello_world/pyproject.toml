@@ -1,0 +1,23 @@
+# Code for Advanced Usage in README
+
+# /hello_world/pyproject.toml
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hello_world"
+version = "0.4.6"
+description = "Usage example app."
+requires-python = ">=3.12.1"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hello_world*"]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[project.scripts]
+hello_world = "hello_world.__main__:main"

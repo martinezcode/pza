@@ -16,7 +16,7 @@ from pride import recipe
 
 APP_NAME = "pride"
 APP_DISPLAY_NAME = "Capture the Pride Flag"
-APP_VERSION = "0.4.2"
+APP_VERSION = "0.4.6"
 
 # --- App functions ---
 

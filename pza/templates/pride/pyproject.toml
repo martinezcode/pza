@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pride"
-version = "0.4.2"
+version = "0.4.6"
 description = "Fun with pride flags."
 authors = [{ name = "Aaron Martinez" }]
 readme = "README.md"
@@ -22,4 +22,4 @@ include = ["pride*"]
 "pride.docs" = ["*"]
 
 [project.scripts]
-pza = "pride.__main__:main"
+pride = "pride.__main__:main"

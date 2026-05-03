@@ -24,7 +24,7 @@ def get_test_app_recipe() -> dict:
     recipe = {
         "name": "test_app",
         "display_name": "Test App",
-        "version": "0.4.2",
+        "version": "0.4.6",
         "entry_point": "pza.tests.test_helpers.test_entry_point_a",
         "test_entry_point": "pza.tests.test_helpers.test_entry_point_b",
         "settings_recipe": get_test_settings_recipe(),
@@ -76,7 +76,7 @@ def get_test_database_recipe() -> dict:
     Defines app database schema.
     """
     recipe = {
-        "schema_version": "0.1.1",
+        "schema_version": "0.4.6",
         "Teams": {
             "team_id": "INTEGER PRIMARY KEY AUTOINCREMENT",
             "team_name": "TEXT",
