@@ -600,6 +600,8 @@ Aaron Martinez - [@martinezcode](https://www.linkedin.com/in/martinezcode/)
 
 The Capture the Pride Flag template includes an option to download sample data from the Pride Flag Identification Guide at [emily-noble/prideflagsearch](https://github.com/emily-noble/prideflagsearch), licensed under the [GNU GPL v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html). Data and images are fetched dynamically and are not redistributed in this repository.
 
+The logo image was created by [@Deans_Icons](https://pixabay.com/users/deans_icons-2620543/) on [Pixabay](https://pixabay.com/illustrations/pizza-pizza-icon-pizza-slice-1428926/), licensed under the [Pixabay Content License](https://pixabay.com/service/license-summary/).
+
 Parts of this project were developed with AI assistance from [ChatGPT](https://chatgpt.com), [Google](https://google.com), and [DuckDuckGo](https://duckduckgo.com/).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
