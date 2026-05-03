@@ -37,7 +37,7 @@ import certifi
 
 FRAMEWORK_NAME = "pza"
 FRAMEWORK_DISPLAY_NAME = "Pza"
-FRAMEWORK_VERSION = "0.4.2"
+FRAMEWORK_VERSION = "0.4.6"
 
 # --- Hub for app features ---
 
@@ -313,7 +313,8 @@ class SettingsHub(object):
         self.defaults = default_settings
         self.settings_folder = get_app_settings_folder(self.app_name)
         self.profile_settings_folder = get_profile_settings_folder(self.app_name, self.profile)
-        self.profile_settings_file = get_profile_settings_file(self.app_name, self.profile, settings_file_name, self.defaults)
+        self.profile_settings_file_name = settings_file_name
+        self.profile_settings_file = get_profile_settings_file(self.app_name, self.profile, self.profile_settings_file_name, self.defaults)
         self.settings_folder_path = Path(self.settings_folder)
         self.profile_settings_folder_path = Path(self.profile_settings_folder)
         self.profile_settings_file_path = Path(self.profile_settings_file)
@@ -372,7 +373,7 @@ class SettingsHub(object):
             current_settings[setting_name] = default_setting
             # Save the setting to file
             # This is safe because current settings do not include overrides
-            settings_file = get_profile_settings_file()
+            settings_file = get_profile_settings_file(self.app_name, self.profile, self.profile_settings_file_name, self.defaults)
             _ = settings.write_settings_file(settings_file, current_settings)
         current_setting = current_settings.get(setting_name)
         return current_setting
@@ -447,6 +448,7 @@ class DatabaseHub(object):
         self.file = get_database_file(self.app_name, database_file_name)
         self.database_recipe = database_recipe
         self.database_created = False
+        self.connection = None
         if self.file and self.database_recipe:
             self.database_created = self.create()
 
@@ -665,19 +667,20 @@ def get_system_settings_folder() -> str:
     """
     Gets string path for platform default settings folder.
     """
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         # Windows
-        appdata_dir = os.environ['APPDATA']
-    elif platform.system() == 'Darwin':
+        appdata_dir = os.environ["APPDATA"]
+    elif platform.system() == "Darwin":
         # macOS
         appdata_dir = os.path.join(
-            os.path.expanduser('~'),
-            'Library',
-            'Application Support'
+            os.path.expanduser("~"),
+            "Library",
+            "Application Support",
+            ""
         )
     else:
         # Linux
-        appdata_dir = os.path.join(os.path.expanduser('~'), '.config')
+        appdata_dir = os.path.join(os.path.expanduser("~"), ".config", "")
     return appdata_dir
 
 def get_pza_folder() -> str | None:
@@ -687,7 +690,7 @@ def get_pza_folder() -> str | None:
     system_folder = get_system_settings_folder()
     if not system_folder:
         return None
-    pza_folder = os.path.join(system_folder, FRAMEWORK_NAME)
+    pza_folder = os.path.join(system_folder, FRAMEWORK_NAME, "")
     _ = create_folder(pza_folder)
     return pza_folder
 
@@ -711,7 +714,7 @@ def get_app_settings_folder(app_name: str) -> str | None:
     system_folder = get_system_settings_folder()
     if not system_folder:
         return None
-    app_folder = os.path.join(system_folder, app_name)
+    app_folder = os.path.join(system_folder, app_name, "")
     _ = create_folder(app_folder)
     return app_folder
 
@@ -724,7 +727,7 @@ def get_profile_settings_folder(app_name: str, profile) -> str | None:
     app_settings_folder = get_app_settings_folder(app_name)
     if not app_settings_folder:
         return None
-    profile_settings_folder = os.path.join(app_settings_folder, profile)
+    profile_settings_folder = os.path.join(app_settings_folder, profile, "")
     _ = create_folder(profile_settings_folder)
     return profile_settings_folder
 
@@ -734,8 +737,8 @@ def get_default_app_documents_folder(app_name: str) -> str | None:
     """
     if not app_name:
         return None
-    home_documents_folder = os.path.expanduser('~')
-    app_documents_folder = os.path.join(home_documents_folder, "Documents", app_name)
+    home_documents_folder = os.path.expanduser("~")
+    app_documents_folder = os.path.join(home_documents_folder, "Documents", app_name, "")
     _ = create_folder(app_documents_folder)
     return app_documents_folder
 
@@ -748,7 +751,7 @@ def get_default_profile_documents_folder(app_name: str, profile: str) -> str | N
     app_documents_folder = get_default_app_documents_folder(app_name)
     if not app_documents_folder:
         return None
-    default_profile_documents_folder = os.path.join(app_documents_folder, profile)
+    default_profile_documents_folder = os.path.join(app_documents_folder, profile, "")
     _ = create_folder(default_profile_documents_folder)
     return default_profile_documents_folder
 
@@ -793,7 +796,7 @@ def get_log_folder(app_name: str) -> str | None:
     app_settings_folder = get_app_settings_folder(app_name)
     if not app_settings_folder:
         return None
-    log_folder = os.path.join(app_settings_folder, "logs")
+    log_folder = os.path.join(app_settings_folder, "logs", "")
     _ = create_folder(log_folder)
     return log_folder
 
@@ -872,6 +875,35 @@ def read_json_file_to_dictionary(json_file: str) -> dict | None:
         print_error(e, f"Unable to read json file {json_file}")
     return json_dictionary
 
+def write_file_from_list(txt_file: str, content_list: list, mode = "w") -> bool:
+    """
+    Writes list content to .txt file.
+    """
+    try:
+        with open(txt_file, mode, encoding="utf-8") as txt_file_io:
+            for content in content_list:
+                txt_file_io.write(content + f"\n")
+    except Exception as e:
+        print_error(e, f"Unable to write {txt_file}")
+        return False
+    return True
+
+def read_file_to_list(txt_file: str) -> list | None:
+    """
+    Reads from .txt file.
+    Returns a list with the loaded data or None if the load fails
+    """
+    content_list = None
+    try:
+        with open(txt_file, "r", encoding="utf-8") as txt_file_io:
+            content_list = txt_file_io.readlines()
+            content_list = [content.strip() for content in content_list]
+    except FileNotFoundError as e:
+        print_error(e, f"Unable to read txt file")
+    except Exception as e:
+        print_error(e, f"Unable to read txt file {txt_file}")
+    return content_list
+
 # --- Download Helpers ---
 
 def download(url: str, destination_file: str, overwrite_existing: bool = True) -> bool:
@@ -921,12 +953,12 @@ def open_file(file: str) -> bool:
         print(f"File does not exist: {file}")
         return False
     try:
-        if platform.system() == 'Darwin':       # macOS
-            subprocess.call(('open', file))
-        elif platform.system() == 'Windows':    # Windows
+        if platform.system() == "Darwin":       # macOS
+            subprocess.call(("open", file))
+        elif platform.system() == "Windows":    # Windows
             os.startfile(file)
-        elif platform.system() == 'Linux':      # Linux variants
-            subprocess.call(('xdg-open', file))
+        elif platform.system() == "Linux":      # Linux variants
+            subprocess.call(("xdg-open", file))
         else:
             raise OSError("Unsupported operating system")
     except Exception as e:
@@ -945,7 +977,7 @@ def open_file_with_browser(file: str) -> bool:
         absolute_file = os.path.abspath(file)
         url = f"file://{absolute_file}"
         # Try named default browsers first
-        for name in ['windows-default', 'safari', 'firefox', 'mozilla', 'chrome', 'google-chrome']:
+        for name in ["windows-default", "safari", "firefox", "mozilla", "chrome", "google-chrome"]:
             try:
                 browser = webbrowser.get(using=name)
                 if not browser.open(url):

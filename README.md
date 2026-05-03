@@ -11,12 +11,14 @@
   <h1>Pza</h1>
 
   <div>
-    A framework for Python zen apps.
+    A framework for settings, database, logging, and command line features in Python apps.
   </div>
 
 </div>
 
 <!-- Contents -->
+
+## Table of Contents
 
 <details>
   <summary>Table of Contents</summary>
@@ -69,7 +71,7 @@
 
 ## About the Project
 
-Pza is a framework that provides commonly used features to Python apps. The framework uses simple recipe dictionary mappings to enable app features.
+Pza is a framework that provides commonly used features to Python apps via simple recipe dictionary mappings.
 
 ### Built With
 
@@ -77,15 +79,36 @@ Pza is a framework that provides commonly used features to Python apps. The fram
 
 ### Features
 
+#### Settings
+
 - Cross-platform settings stored in OS-standard locations
-- JSON-based configuration with profile support
-- Built-in onboarding wizard for intial user setup
-- Structured logging to the console and/or rotating log files
-- SQLite database integration with helpers
-- Command line interface argument parsing
+- JSON-based configuration
+- User and session profiles
+- Onboarding wizard for intial user setup
+
+#### Database
+
+- SQLite database integration
+- Automatic database creation
+- Helper function library
+
+#### Logging
+
+- Structured logging
+- Console and log file output
+- Log file rotation
+
+#### Command Line
+
+- Launch command and argument customization
+- Graceful argument parsing
+- Dynamic application entry points
+
+#### Templates
+
 - Starter app templates for:
-    - Modular python projects with multiple files and folders
-    - Self-contained python projects within a single file
+    - Modular Python project with multiple files and folders
+    - Self-contained Python app within a single file
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -154,8 +177,10 @@ python -c "import pza; print(pza)"
 Basic usage involves defining an app recipe dictionary and creating an instance of the AppHub class.
 
 ```python
+# Import framework
 import pza.pie
 
+# Define app spec
 def get_app_recipe() -> dict:
     """
     Defines app specifications.
@@ -163,34 +188,26 @@ def get_app_recipe() -> dict:
     recipe = {
         "name": "test_app",
         "display_name": "Test App",
-        "version": "0.4.2",
+        "version": "0.4.6",
     }
     return recipe
 
-app_recipe = get_app_recipe()
-CurrentAppHub = pza.pie.AppHub(app_recipe)
+# Initialize app features
+CurrentAppHub = pza.pie.AppHub(get_app_recipe())
 
-print(CurrentAppHub)
-print()
-
+# Display app info
 CurrentAppHub.list()
-print()
 
+# Test logging
 CurrentAppHub.logger.info("foo")
 
-app_settings_folder = CurrentAppHub.settings_folder
-profile_settings_folder = CurrentAppHub.profile_settings_folder
-app_documents_folder = CurrentAppHub.settings.get_app_documents_folder()
-profile_documents_folder = CurrentAppHub.settings.get_profile_documents_folder()
-database_file = CurrentAppHub.database_file
-database_created = CurrentAppHub.database.database_created
-
-print(f"App Settings Folder: {app_settings_folder}")
-print(f"Profile Settings Folder: {profile_settings_folder}")
-print(f"App Documents Folder: {app_documents_folder}")
-print(f"Profile Documents Folder: {profile_documents_folder}")
-print(f"App Database File: {database_file}")
-print(f"Database Created: {database_created}")
+# Access app folders and files
+print(f"App Settings Folder: {CurrentAppHub.settings_folder}")
+print(f"Profile Settings Folder: {CurrentAppHub.profile_settings_folder}")
+print(f"App Documents Folder: {CurrentAppHub.settings.get_app_documents_folder()}")
+print(f"Profile Documents Folder: {CurrentAppHub.settings.get_profile_documents_folder()}")
+print(f"App Database File: {CurrentAppHub.database_file}")
+print(f"Database Created: {CurrentAppHub.database.database_created}")
 
 ```
 
@@ -202,7 +219,7 @@ The minimum requirement to enable these features is an app name in the recipe. E
 
 ## Advanced Usage
 
-The command line interface features can be enabled using the recommended project directory structure with a toml file for installation as a python package.
+Command line interface features can be enabled using the recommended project directory structure with a toml file for installation as a python package.
 
 ```
 /path/to/hello_world/
@@ -214,8 +231,10 @@ The main python code file contains the framework interface launcher with a call 
 
 The app recipe `entry_point` and command recipe `callback` specify the paths to special entry point functions in the package. These functions should take an AppHub object as the first parameter and any recipe defined arguments as additional parameters.
 
+This example demonstrates a `hello_world` command line app with the commands: `echo`, `config`, and `test`.
+
 ```python
-# __main__.py
+# /hello_world/hello_world/__main__.py
 
 import pza.interface
 from pza.pie import AppHub
@@ -229,7 +248,7 @@ def get_app_recipe() -> dict:
     recipe = {
         "name": "hello_world",
         "display_name": "Hello World",
-        "version": "0.4.2",
+        "version": "0.4.6",
         "entry_point": "__main__.hello",
         "command_recipe": get_command_recipe(),
     }
@@ -287,7 +306,7 @@ def main() -> None:
     Launches the interface with `pza.interface.run()`.
     Commands defined for this app are: `config`, `test`, `echo`.
     The commands `config` and `test` are provided by the framework.
-    The command echo is specified by the app recipe `command_recipe`.
+    The command `echo` is specified by the app recipe `command_recipe`.
     """
     pza.interface.run(
         get_app_recipe(),
@@ -300,12 +319,13 @@ if __name__ == "__main__":
     Runs the main function to launch the app interface.
     """
     main()
-```
-
-The pyproject.toml file registers the command line interface launcher for the app package in the `[project.scripts]` section. In this example, the app name points to the main function in the \_\_main\_\_ file in the hello_world package using the format `package.module:function`.
 
 ```
-# pyproject.toml
+
+The pyproject.toml file registers the command line interface launcher for the app in the `[project.scripts]` section. In this example, the app name `hello_world` points to the `main` function in the `__main__` file in the `hello_world` package using the format `package.module:function`.
+
+```
+# /hello_world/pyproject.toml
 
 [build-system]
 requires = ["setuptools>=61.0"]
@@ -313,7 +333,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hello_world"
-version = "0.4.2"
+version = "0.4.6"
 description = "Usage example app."
 requires-python = ">=3.12.1"
 
@@ -364,7 +384,7 @@ Universal arguments available to any app using the framework with `pza.interface
 
 These arguments must come first when running the app, before the commmand and app-specific arguments.
 
-The `--debug` argument enables elevation of the log level for a current session. To force the log level to `debug`, use `--debug`:
+The `--debug` argument elevates the log level for a current session:
 
 ```bash
 python -m hello_world --debug echo --input foo

@@ -60,7 +60,7 @@ def get_database_recipe() -> dict:
     Defines app database schema.
     """
     recipe = {
-        "schema_version": "0.1.1",
+        "schema_version": "0.4.6",
         "Colors": {
             "color_id": "INTEGER PRIMARY KEY AUTOINCREMENT",
             "color_name": "TEXT",

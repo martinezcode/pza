@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pza"
-version = "0.4.2"
-description = "Framework for python zen apps."
+version = "0.4.6"
+description = "Framework for python apps."
 authors = [{ name = "Aaron Martinez" }]
 readme = "README.md"
 license = { text = "MIT" }

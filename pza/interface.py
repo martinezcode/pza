@@ -311,14 +311,16 @@ def run(
             for setting_name, setting_value in args.set:
                 # Clean and convert data type
                 if isinstance(setting_value, str):
-                    setting_value = setting_value.lower().strip()
-                    if setting_value == "true":
-                        setting_value = True
-                    elif setting_value == "false":
-                        setting_value = False
-                    elif setting_value in ["none", "null"]:
-                        setting_value = None
-                _ = CurrentAppHub.settings.set(setting_name, setting_value)
+                    setting_value_clean = setting_value.lower().strip()
+                    if setting_value_clean == "true":
+                        _ = CurrentAppHub.settings.set(setting_name, True)
+                    elif setting_value_clean == "false":
+                        _ = CurrentAppHub.settings.set(setting_name, False)
+                    elif setting_value_clean in ["none", "null"]:
+                        _ = CurrentAppHub.settings.set(setting_name, None)
+                    else:
+                        _ = CurrentAppHub.settings.set(setting_name, setting_value)
+
             # Reload and display the updated setting
             print(f"Updated {active_profile} profile")
             print()

@@ -16,7 +16,7 @@ import pza.database
 
 APP_NAME = "solo"
 APP_DISPLAY_NAME = "solo"
-APP_VERSION = "0.4.2"
+APP_VERSION = "0.4.6"
 
 # --- App Recipe ---
 
@@ -59,7 +59,7 @@ def get_database_recipe() -> dict:
     Defines app database schema.
     """
     recipe = {
-        "schema_version": "0.4.2", # Change 'schema_version' to trigger auto-update
+        "schema_version": "0.4.6",
         "Reasons": {
             "reason_id": "INTEGER PRIMARY KEY AUTOINCREMENT",
             "reason": "TEXT",
