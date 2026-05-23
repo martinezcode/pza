@@ -415,18 +415,22 @@ def register_commands_from_recipe(subparsers, command_recipe, verbose = False):
 
             # Process arguments for the current command
             for arg in cmd_args:
-                if "exclusive" in arg.keys() and arg["exclusive"]:
-                    # Add group argument
-                    group_subparser.add_argument(
-                        arg["name"],
-                        **{k: v for k, v in arg.items() if k != "name" and k != "exclusive"}
-                    )
-                else:
-                    # Add standard argument
-                    cmd_subparser.add_argument(
-                        arg["name"],
-                        **{k: v for k, v in arg.items() if k != "name" and k != "exclusive"}
-                    )
+                try:
+                    if "exclusive" in arg.keys() and arg["exclusive"]:
+                        # Add group argument
+                        group_subparser.add_argument(
+                            arg["name"],
+                            **{k: v for k, v in arg.items() if k != "name" and k != "exclusive"}
+                        )
+                    else:
+                        # Add standard argument
+                        cmd_subparser.add_argument(
+                            arg["name"],
+                            **{k: v for k, v in arg.items() if k != "name" and k != "exclusive"}
+                        )
+                except Exception as e:
+                    print_error(e, f"Unable to parse arguments '{arg}'")
+                    return None
 
             # Add the callback function to the current command parser
             cmd_subparser.set_defaults(_handler=cmd_callback_function)
